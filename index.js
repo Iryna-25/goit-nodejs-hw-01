@@ -1,8 +1,6 @@
 // console.log('Hello!');
 
-const contacts = require("./contacts");
-// console.log(contacts);
-
+// index.js
 const { Command } = require('commander');
 const program = new Command();
 program
@@ -16,31 +14,34 @@ program.parse(process.argv);
 
 const argv = program.opts();
 
-// TODO: рефакторить
-async function invokeAction({ action, id, name, email, phone }) {
+const contactsOperations = require("./contacts");
+// console.log(contactsOperations);
+
+// // TODO: рефакторить
+const invokeAction = async ({ action, id, name, email, phone })  => {
     switch (action) {
-        case 'list':
-            const listContacts = await contacts.listContacts();
-            console.table(listContacts);
+        case 'listContacts':
+            const contacts = await contactsOperations.listContacts();
+            console.table(contacts);
             break;
  
-        case 'get':
-            const getContactById = await contacts.getContactById(id);
-            console.table(getContactById);
+        case 'getContactById':
+            const contact = await contactsOperations.getContactById(id);
+            console.log(contact);
             break;
 
-        case 'add':
-            const addContact = await contacts.addContact(name, email, phone);
-            console.table(addContact);
+        case 'addContact':
+            const newContact = await contactsOperations.addContact(name, email, phone);
+            console.table(newContact);
             break;
 
-        case 'remove':
-            const removeContactById = await contacts.removeContact(id);
-            if (!removeContactById) {
-                throw new Error(`Contact id = ${id} is not found`);
-            }
-            console.log("Contact has been already deleted:");
-            console.table(removeContactById);
+        case 'removeContact':
+            const removeContact = await contactsOperations.removeContact(id);
+            // if (!removeContactById) {
+            //     throw new Error(`Contact id = ${id} is not found`);
+            // }
+            // console.log("Contact has been already deleted:");
+            console.table(removeContact);
             break;
         default:
         console.warn('\x1B[31m Unknown action type!');
@@ -49,3 +50,22 @@ async function invokeAction({ action, id, name, email, phone }) {
 
 invokeAction(argv);
 
+// const action = process.argv.find(item => item == "--action");
+// if (action !== -1 ) {
+//     const actionName = process.argv[action + 1];
+//     invokeAction({action})    
+// }
+
+
+// (async () => {
+//     try {
+//         await invokeAction(argv);
+//     } catch (error) {
+//         console.log(`Error: ${error.message}`);
+//     }
+// })();
+
+// invokeAction({ action: "listContacts" });
+// invokeAction({ action: "getContactById", id: "5" });
+// invokeAction({ action: "addContact", name: "RChaimr Lewis", email: "udui.in@egetlacus.ca", phone: "(294) 040-6685" });
+// invokeAction({ action: "removeContact", id: "5" });
