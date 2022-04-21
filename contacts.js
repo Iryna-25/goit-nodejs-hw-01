@@ -1,14 +1,9 @@
-// contacts.js
-
 const fs = require("fs/promises");
 const path = require("path");
 const { nanoid } = require("nanoid");
 
-// Раскомментируй и запиши значение
 const contactsPath = path.join(__dirname, "./db/contacts.json");
-// console.log(contactsPath)
 
-// TODO: задокументировать каждую функцию
 const listContacts = async ()=> {
     try {
         const data = await fs.readFile(contactsPath);
@@ -42,15 +37,14 @@ const addContact = async (name, email, phone) => {
     return newContact;
 }
 
-
-const removeContact = async (id) => {
+const removeContact = async (contactId) => {
     const contacts = await listContacts();
-    const oldContacts = contacts.findIndex(item => item.id === id);
+    const oldContacts = contacts.findIndex(item => item.id === contactId);
     if (oldContacts === -1) {
         return null;
     }
     const [removedContact] = contacts.splice(oldContacts, 1);
-    // await updateContacts(contacts);
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 3));
     return removedContact;
 };
 
